@@ -1,0 +1,17 @@
+RewriteEngine ON
+
+RewriteRule ^categories/([0-9]+)?$ categories/api/categories.php?category_id=$1 [NC,L]
+RewriteRule ^categories/?$ categories/api/categories.php [NC,L]
+
+RewriteRule ^users/([0-9]+)?$ users/api/users.php?user_id=$1 [NC,L]
+RewriteRule ^users/?$ users/api/users.php [NC,L]
+RewriteRule ^login/?$ users/api/login.php [NC,L]
+
+RewriteRule ^articles/([0-9]+)?$ articles/api/articles.php?article_id=$1 [NC,L]
+RewriteRule ^articles/?$ articles/api/articles.php [NC,L]
+
+RewriteRule ^images/([0-9]+)?$ images/api/images.php?image_id=$1 [NC,L]
+RewriteRule ^images/?$ images/api/images.php [NC,L]
+
+RewriteRule ^videos/([0-9]+)?$ videos/api/videos.php?video_id=$1 [NC,L]
+RewriteRule ^videos/?$ videos/api/videos.php [NC,L]
