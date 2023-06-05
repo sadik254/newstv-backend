@@ -52,14 +52,34 @@ class Tags
     }
 
     // READ single tag
-    function getSingleTag()
-    {
-        $sqlQuery = "SELECT * FROM " . $this->db_table . " WHERE tag_id = ?";
-        $stmt = $this->conn->prepare($sqlQuery);
-        $stmt->bindParam(1, $this->tag_id);
-        $stmt->execute();
-        return $stmt;
+    public function getSingleTag()
+{
+    $sqlQuery = "SELECT
+                tag_id,
+                name,
+                created_at,
+                updated_at
+              FROM
+                " . $this->db_table . "
+              WHERE 
+                tag_id = ?
+              LIMIT 0,1";
+    $stmt = $this->conn->prepare($sqlQuery);
+    $stmt->bindParam(1, $this->tag_id);
+    $stmt->execute();
+    $dataRow = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$dataRow) {
+        $this->name = null;
+        $this->created_at = null;
+        $this->updated_at = null;
+    } else {
+        $this->name = $dataRow['name'];
+        $this->created_at = $dataRow['created_at'];
+        $this->updated_at = $dataRow['updated_at'];
     }
+}
+
 
     // get tag by ID 
     public function getTagbyId($tag_id) {

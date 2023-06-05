@@ -29,9 +29,9 @@ class Videos {
     // CREATE
     public function createVideo() {
 
-        if($this->isAlreadyExist()){
-            return false;
-        }
+        // if($this->isAlreadyExist()){
+        //     return false;
+        // }
 
         $sqlQuery = "INSERT INTO
                         " . $this->db_table . "

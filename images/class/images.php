@@ -33,9 +33,9 @@ class Images
     function createImage()
     {
 
-        if($this->isAlreadyExist()){
-            return false;
-        }
+        // if($this->isAlreadyExist()){
+        //     return false;
+        // }
 
         $sqlQuery = "INSERT INTO " . $this->db_table . " SET
             article_id = :article_id,

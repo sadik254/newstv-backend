@@ -134,9 +134,7 @@
                     content = :content,
                     user_id = :user_id,
                     publication_date = :publication_date,
-                    status = :status,
-                    created_at = :created_at,
-                    updated_at = :updated_at
+                    status = :status
                     WHERE
                         article_id = :article_id";
 
