@@ -12,6 +12,7 @@ RewriteRule ^articles/?$ articles/api/articles.php [NC,L]
 
 RewriteRule ^images/([0-9]+)?$ images/api/images.php?image_id=$1 [NC,L]
 RewriteRule ^images/?$ images/api/images.php [NC,L]
+RewriteRule ^images/upload/?$ images/api/upload.php [NC,L]
 
 RewriteRule ^videos/([0-9]+)?$ videos/api/videos.php?video_id=$1 [NC,L]
 RewriteRule ^videos/?$ videos/api/videos.php [NC,L]
@@ -36,6 +37,7 @@ RewriteRule ^article-metadata/?$ article_metadata/api/article_metadata.php [NC,L
 
 RewriteRule ^polls/([0-9]+)?$ polls/api/polls.php?id=$1 [NC,L]
 RewriteRule ^polls/?$ polls/api/polls.php [NC,L]
+RewriteRule ^polls/upload/?$ polls/api/upload.php [NC,L]
 
 RewriteRule ^poll-option/([0-9]+)?$ poll_option/api/poll_option.php?poll_id=$1 [NC,L]
 RewriteRule ^poll-option/?$ poll_option/api/poll_option.php [NC,L]
