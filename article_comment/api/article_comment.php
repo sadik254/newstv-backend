@@ -14,7 +14,7 @@ $db = $database->getConnection();
 $articleComment = new ArticleComment($db);
 
 $httpMethod = $_SERVER['REQUEST_METHOD'];
-// Add this block before the switch statement
+// Add this block before the switch statement to handle preflight request
 if ($httpMethod == 'OPTIONS') {
     header("Access-Control-Allow-Origin: *");
     header("Content-Type: application/json; charset=UTF-8");

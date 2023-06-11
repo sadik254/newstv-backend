@@ -33,3 +33,12 @@ RewriteRule ^article-comment/?$ article_comment/api/article_comment.php [NC,L]
 
 RewriteRule ^article-metadata/([0-9]+)?$ article_metadata/api/article_metadata.php?metadata_id=$1 [NC,L]
 RewriteRule ^article-metadata/?$ article_metadata/api/article_metadata.php [NC,L]
+
+RewriteRule ^polls/([0-9]+)?$ polls/api/polls.php?id=$1 [NC,L]
+RewriteRule ^polls/?$ polls/api/polls.php [NC,L]
+
+RewriteRule ^poll-option/([0-9]+)?$ poll_option/api/poll_option.php?poll_id=$1 [NC,L]
+RewriteRule ^poll-option/?$ poll_option/api/poll_option.php [NC,L]
+
+RewriteRule ^articleapi/([0-9]+)?$ articleapi/api/articleapi.php?article_id=$1 [NC,L]
+RewriteRule ^articleapi/?$ articleapi/api/articleapi.php [NC,L]

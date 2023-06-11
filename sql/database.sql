@@ -98,3 +98,23 @@ CREATE TABLE article_metadata (
     article_id INT,
     FOREIGN KEY (article_id) REFERENCES articles(article_id)
 );
+
+CREATE TABLE polls (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    question VARCHAR(255) NOT NULL,
+    total_votes INT NOT NULL DEFAULT 0,
+    publication_date DATE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE poll_options (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    poll_id INT NOT NULL,
+    option_text VARCHAR(255) NOT NULL,
+    vote_count INT NOT NULL DEFAULT 0,
+    percentage DECIMAL(5, 2) NOT NULL DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (poll_id) REFERENCES polls(id)
+);
