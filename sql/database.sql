@@ -119,3 +119,19 @@ CREATE TABLE poll_options (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (poll_id) REFERENCES polls(id)
 );
+
+CREATE TABLE sub_categories (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    sub_category_name VARCHAR(255) NOT NULL,
+    category_id INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (category_id) REFERENCES categories(category_id)
+);
+
+CREATE TABLE article_sub_categories (
+    article_id INT,
+    sub_category_id INT,
+    FOREIGN KEY (article_id) REFERENCES articles(article_id),
+    FOREIGN KEY (sub_category_id) REFERENCES sub_categories(id)
+)

@@ -42,3 +42,7 @@ RewriteRule ^poll-option/?$ poll_option/api/poll_option.php [NC,L]
 
 RewriteRule ^articleapi/([0-9]+)?$ articleapi/api/articleapi.php?article_id=$1 [NC,L]
 RewriteRule ^articleapi/?$ articleapi/api/articleapi.php [NC,L]
+
+RewriteRule ^sub-category/([0-9]+)?$ sub_categories/api/sub_category.php?id=$1 [NC,L]
+RewriteRule ^sub-category/category/([0-9]+)?$ sub_categories/api/getsubusingcategory.php?category_id=$1 [NC,L]
+RewriteRule ^sub-category/?$ sub_categories/api/sub_category.php [NC,L]

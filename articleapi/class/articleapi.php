@@ -10,21 +10,24 @@ class ArticleAPI {
 
     public function getArticle($articleId) {
         $query = "
-        SELECT articles.article_id, articles.title, articles.content, articles.publication_date,
-               GROUP_CONCAT(DISTINCT categories.name) AS category_names, users.username,
-               GROUP_CONCAT(DISTINCT images.file_name) AS file_names, GROUP_CONCAT(DISTINCT images.file_path) AS file_paths, 
-               GROUP_CONCAT(DISTINCT tags.name) AS tag_names,
-               GROUP_CONCAT(DISTINCT article_metadata.metadata_content) AS metadata_contents
-        FROM articles
-        LEFT JOIN article_categories ON articles.article_id = article_categories.article_id
-        LEFT JOIN categories ON article_categories.category_id = categories.category_id
-        LEFT JOIN users ON articles.user_id = users.user_id
-        LEFT JOIN images ON articles.article_id = images.article_id
-        LEFT JOIN article_tags ON articles.article_id = article_tags.article_id
-        LEFT JOIN tags ON article_tags.tag_id = tags.tag_id
-        LEFT JOIN article_metadata ON articles.article_id = article_metadata.article_id
-        WHERE articles.article_id = :articleId
-        GROUP BY articles.article_id
+            SELECT articles.article_id, articles.title, articles.content, articles.publication_date,
+                   GROUP_CONCAT(DISTINCT categories.name) AS category_names, users.username,
+                   GROUP_CONCAT(DISTINCT images.file_name) AS file_names, GROUP_CONCAT(DISTINCT images.file_path) AS file_paths, 
+                   GROUP_CONCAT(DISTINCT tags.name) AS tag_names,
+                   GROUP_CONCAT(DISTINCT article_metadata.metadata_content) AS metadata_contents,
+                   GROUP_CONCAT(DISTINCT sub_categories.sub_category_name) AS sub_category_names
+            FROM articles
+            LEFT JOIN article_categories ON articles.article_id = article_categories.article_id
+            LEFT JOIN categories ON article_categories.category_id = categories.category_id
+            LEFT JOIN users ON articles.user_id = users.user_id
+            LEFT JOIN images ON articles.article_id = images.article_id
+            LEFT JOIN article_tags ON articles.article_id = article_tags.article_id
+            LEFT JOIN tags ON article_tags.tag_id = tags.tag_id
+            LEFT JOIN article_metadata ON articles.article_id = article_metadata.article_id
+            LEFT JOIN article_sub_categories ON articles.article_id = article_sub_categories.article_id
+            LEFT JOIN sub_categories ON article_sub_categories.sub_category_id = sub_categories.id
+            WHERE articles.article_id = :articleId
+            GROUP BY articles.article_id
         ";
     
         $stmt = $this->conn->prepare($query);
@@ -47,18 +50,20 @@ class ArticleAPI {
                 );
             }, explode(",", $results[0]['file_names']), explode(",", $results[0]['file_paths'])),
             "tags" => explode(",", $results[0]['tag_names']),
-            "metadata" => explode(",", $results[0]['metadata_contents'])
+            "metadata" => explode(",", $results[0]['metadata_contents']),
+            "sub_categories" => explode(",", $results[0]['sub_category_names'])
         );
     
         return $article;
     }
     
+    
     public function createArticle($articleData) {
         $insertArticleQuery = "
-        INSERT INTO articles (title, content, user_id, publication_date, status)
-        VALUES (:title, :content, :user_id, :publication_date, :status)
+            INSERT INTO articles (title, content, user_id, publication_date, status)
+            VALUES (:title, :content, :user_id, :publication_date, :status)
         ";
-        
+    
         $stmt = $this->conn->prepare($insertArticleQuery);
         $stmt->bindValue(":title", $articleData['title'], PDO::PARAM_STR);
         $stmt->bindValue(":content", $articleData['content'], PDO::PARAM_STR);
@@ -71,10 +76,10 @@ class ArticleAPI {
     
         if (!empty($articleData['images'])) {
             $insertImageQuery = "
-            INSERT INTO images (article_id, file_name, file_path)
-            VALUES (:article_id, :file_name, :file_path)
+                INSERT INTO images (article_id, file_name, file_path)
+                VALUES (:article_id, :file_name, :file_path)
             ";
-            
+    
             $stmt = $this->conn->prepare($insertImageQuery);
             foreach ($articleData['images'] as $image) {
                 $stmt->bindValue(":article_id", $articleId, PDO::PARAM_INT);
@@ -87,10 +92,10 @@ class ArticleAPI {
     
         if (!empty($articleData['tags'])) {
             $insertTagQuery = "
-            INSERT INTO article_tags (article_id, tag_id)
-            VALUES (:article_id, :tag_id)
+                INSERT INTO article_tags (article_id, tag_id)
+                VALUES (:article_id, :tag_id)
             ";
-            
+    
             $stmt = $this->conn->prepare($insertTagQuery);
             foreach ($articleData['tags'] as $tag) {
                 $stmt->bindValue(":article_id", $articleId, PDO::PARAM_INT);
@@ -102,10 +107,10 @@ class ArticleAPI {
     
         if (!empty($articleData['categories'])) {
             $insertCategoryQuery = "
-            INSERT INTO article_categories (article_id, category_id)
-            VALUES (:article_id, :category_id)
+                INSERT INTO article_categories (article_id, category_id)
+                VALUES (:article_id, :category_id)
             ";
-            
+    
             $stmt = $this->conn->prepare($insertCategoryQuery);
             foreach ($articleData['categories'] as $category) {
                 $stmt->bindValue(":article_id", $articleId, PDO::PARAM_INT);
@@ -117,10 +122,10 @@ class ArticleAPI {
     
         if (!empty($articleData['metadata'])) {
             $insertMetadataQuery = "
-            INSERT INTO article_metadata (metadata_content, article_id)
-            VALUES (:metadata_content, :article_id)
+                INSERT INTO article_metadata (metadata_content, article_id)
+                VALUES (:metadata_content, :article_id)
             ";
-            
+    
             $stmt = $this->conn->prepare($insertMetadataQuery);
             foreach ($articleData['metadata'] as $metadata) {
                 $stmt->bindValue(":metadata_content", $metadata, PDO::PARAM_STR);
@@ -128,10 +133,26 @@ class ArticleAPI {
                 $stmt->execute();
             }
             $stmt->closeCursor();
-        }        
+        }
+    
+        if (!empty($articleData['sub_categories'])) {
+            $insertSubCategoryQuery = "
+                INSERT INTO article_sub_categories (article_id, sub_category_id)
+                VALUES (:article_id, :sub_category_id)
+            ";
+    
+            $stmt = $this->conn->prepare($insertSubCategoryQuery);
+            foreach ($articleData['sub_categories'] as $subCategory) {
+                $stmt->bindValue(":article_id", $articleId, PDO::PARAM_INT);
+                $stmt->bindValue(":sub_category_id", $subCategory['sub_category_id'], PDO::PARAM_INT);
+                $stmt->execute();
+            }
+            $stmt->closeCursor();
+        }
     
         return $articleId;
     }
+    
     
 
     public function updateArticle($articleId, $articleData) {
@@ -223,7 +244,7 @@ class ArticleAPI {
         $stmt = $this->conn->prepare($deleteMetadataQuery);
         $stmt->bindValue(":article_id", $articleId, PDO::PARAM_INT);
         $stmt->execute();
-           $stmt->closeCursor();
+        $stmt->closeCursor();
     
         if (!empty($articleData['metadata'])) {
             $insertMetadataQuery = "
@@ -237,6 +258,27 @@ class ArticleAPI {
             $stmt->bindParam(":metadata_content", $metadata_content, PDO::PARAM_STR);
             foreach ($articleData['metadata'] as $metadata) {
                 $metadata_content = $metadata;
+                $stmt->execute();
+            }
+            $stmt->closeCursor();
+        }
+
+        $deleteSubCategoryQuery = "DELETE FROM article_sub_categories WHERE article_id = :article_id";
+        $stmt = $this->conn->prepare($deleteSubCategoryQuery);
+        $stmt->bindValue(":article_id", $articleId, PDO::PARAM_INT);
+        $stmt->execute();
+        $stmt->closeCursor();
+
+        if (!empty($articleData['sub_categories'])) {
+            $insertSubCategoryQuery = "
+                INSERT INTO article_sub_categories (article_id, sub_category_id)
+                VALUES (:article_id, :sub_category_id)
+            ";
+    
+            $stmt = $this->conn->prepare($insertSubCategoryQuery);
+            foreach ($articleData['sub_categories'] as $subCategory) {
+                $stmt->bindValue(":article_id", $articleId, PDO::PARAM_INT);
+                $stmt->bindValue(":sub_category_id", $subCategory['sub_category_id'], PDO::PARAM_INT);
                 $stmt->execute();
             }
             $stmt->closeCursor();
@@ -268,6 +310,12 @@ class ArticleAPI {
 
         $deleteArticleCategory = "DELETE FROM article_categories WHERE article_id = :article_id";
         $stmt = $this->conn->prepare($deleteArticleCategory);
+        $stmt->bindValue(":article_id", $articleId, PDO::PARAM_INT);
+        $stmt->execute();
+        $stmt->closeCursor();
+
+        $deleteArticleSubCategory = "DELETE FROM article_sub_categories WHERE article_id = :article_id";
+        $stmt = $this->conn->prepare($deleteArticleSubCategory);
         $stmt->bindValue(":article_id", $articleId, PDO::PARAM_INT);
         $stmt->execute();
         $stmt->closeCursor();
