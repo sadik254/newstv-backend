@@ -36,6 +36,7 @@ switch ($httpMethod) {
                     "question" => $poll->question,
                     "total_votes" => $poll->total_votes,
                     "publication_date" => $poll->publication_date,
+                    "image" => $poll->image,
                     "created_at" => $poll->created_at,
                     "updated_at" => $poll->updated_at
                 );
@@ -55,6 +56,7 @@ switch ($httpMethod) {
                     "question" => $question,
                     "total_votes" => $total_votes,
                     "publication_date" => $publication_date,
+                    "image" => $image,
                     "created_at" => $created_at,
                     "updated_at" => $updated_at
                 );
@@ -70,6 +72,7 @@ switch ($httpMethod) {
         $data = json_decode(file_get_contents("php://input"));
         $poll->question = $data->question;
         $poll->publication_date = $data->publication_date;
+        $poll->image = $data->image;
 
         if ($poll->createPoll()) {
             http_response_code(201);
@@ -86,6 +89,7 @@ switch ($httpMethod) {
         $poll->id = $data->id;
         $poll->question = $data->question;
         $poll->publication_date = $data->publication_date;
+        $poll->image = $data->image;
 
         if ($poll->updatePoll()) {
             http_response_code(200);

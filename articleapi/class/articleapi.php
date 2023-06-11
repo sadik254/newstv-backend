@@ -55,8 +55,8 @@ class ArticleAPI {
     
     public function createArticle($articleData) {
         $insertArticleQuery = "
-        INSERT INTO articles (title, content, user_id, publication_date)
-        VALUES (:title, :content, :user_id, :publication_date)
+        INSERT INTO articles (title, content, user_id, publication_date, status)
+        VALUES (:title, :content, :user_id, :publication_date, :status)
         ";
         
         $stmt = $this->conn->prepare($insertArticleQuery);
@@ -64,10 +64,11 @@ class ArticleAPI {
         $stmt->bindValue(":content", $articleData['content'], PDO::PARAM_STR);
         $stmt->bindValue(":user_id", $articleData['user_id'], PDO::PARAM_INT);
         $stmt->bindValue(":publication_date", $articleData['publication_date'], PDO::PARAM_STR);
+        $stmt->bindValue(":status", $articleData['status'], PDO::PARAM_STR);
         $stmt->execute();
         $articleId = $this->conn->lastInsertId();
         $stmt->closeCursor();
-
+    
         if (!empty($articleData['images'])) {
             $insertImageQuery = "
             INSERT INTO images (article_id, file_name, file_path)
@@ -83,7 +84,7 @@ class ArticleAPI {
             }
             $stmt->closeCursor();
         }
-
+    
         if (!empty($articleData['tags'])) {
             $insertTagQuery = "
             INSERT INTO article_tags (article_id, tag_id)
@@ -98,7 +99,22 @@ class ArticleAPI {
             }
             $stmt->closeCursor();
         }        
-
+    
+        if (!empty($articleData['categories'])) {
+            $insertCategoryQuery = "
+            INSERT INTO article_categories (article_id, category_id)
+            VALUES (:article_id, :category_id)
+            ";
+            
+            $stmt = $this->conn->prepare($insertCategoryQuery);
+            foreach ($articleData['categories'] as $category) {
+                $stmt->bindValue(":article_id", $articleId, PDO::PARAM_INT);
+                $stmt->bindValue(":category_id", $category['category_id'], PDO::PARAM_INT);
+                $stmt->execute();
+            }
+            $stmt->closeCursor();
+        }
+    
         if (!empty($articleData['metadata'])) {
             $insertMetadataQuery = "
             INSERT INTO article_metadata (metadata_content, article_id)
@@ -113,9 +129,10 @@ class ArticleAPI {
             }
             $stmt->closeCursor();
         }        
-
+    
         return $articleId;
     }
+    
 
     public function updateArticle($articleId, $articleData) {
         $updateArticleQuery = "
@@ -181,6 +198,26 @@ class ArticleAPI {
             }
             $stmt->closeCursor();
         }
+        $deleteCategoriesQuery = "DELETE FROM article_categories WHERE article_id = :article_id";
+        $stmt = $this->conn->prepare($deleteCategoriesQuery);
+        $stmt->bindValue(":article_id", $articleId, PDO::PARAM_INT);
+        $stmt->execute();
+        $stmt->closeCursor();
+
+        if (!empty($articleData['categories'])) {
+            $insertCategoryQuery = "
+            INSERT INTO article_categories (article_id, category_id)
+            VALUES (:article_id, :category_id)
+            ";
+            
+            $stmt = $this->conn->prepare($insertCategoryQuery);
+            foreach ($articleData['categories'] as $category) {
+                $stmt->bindValue(":article_id", $articleId, PDO::PARAM_INT);
+                $stmt->bindValue(":category_id", $category['category_id'], PDO::PARAM_INT);
+                $stmt->execute();
+            }
+            $stmt->closeCursor();
+        }
     
         $deleteMetadataQuery = "DELETE FROM article_metadata WHERE article_id = :article_id";
         $stmt = $this->conn->prepare($deleteMetadataQuery);
@@ -228,7 +265,13 @@ class ArticleAPI {
         $stmt->bindValue(":article_id", $articleId, PDO::PARAM_INT);
         $stmt->execute();
         $stmt->closeCursor();
-    
+
+        $deleteArticleCategory = "DELETE FROM article_categories WHERE article_id = :article_id";
+        $stmt = $this->conn->prepare($deleteArticleCategory);
+        $stmt->bindValue(":article_id", $articleId, PDO::PARAM_INT);
+        $stmt->execute();
+        $stmt->closeCursor();
+
         // Now delete the row from the articles table
         $deleteArticleQuery = "DELETE FROM articles WHERE article_id = :article_id";
         $stmt = $this->conn->prepare($deleteArticleQuery);

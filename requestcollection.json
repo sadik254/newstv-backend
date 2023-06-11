@@ -1234,7 +1234,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"question\": \"What is your favorite color?\",\r\n    \"publication_date\": \"2023-06-11\"\r\n}\r\n"
+					"raw": "{\r\n    \"question\": \"What is your favorite color?\",\r\n    \"publication_date\": \"2023-06-11\",\r\n    \"image\": \"file232.jpeg\"\r\n}\r\n"
 				},
 				"url": {
 					"raw": "localhost/video/polls/",
@@ -1276,7 +1276,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"id\" : \"1\",\r\n    \"question\": \"What is your favorite food?\",\r\n    \"publication_date\": \"2023-06-11\"\r\n}\r\n"
+					"raw": "{\r\n    \"id\" : \"1\",\r\n    \"question\": \"What is your favorite food?\",\r\n    \"publication_date\": \"2023-06-11\",\r\n    \"image\": \"file2323.jpeg\"\r\n}\r\n"
 				},
 				"url": {
 					"raw": "localhost/video/polls/",
