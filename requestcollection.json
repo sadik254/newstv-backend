@@ -1594,6 +1594,64 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "upload poll image",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "file",
+							"type": "file",
+							"src": []
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost/video/polls/upload",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"video",
+						"polls",
+						"upload"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "upload article images",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "file",
+							"type": "file",
+							"src": []
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost/video/images/upload",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"video",
+						"images",
+						"upload"
+					]
+				}
+			},
+			"response": []
 		}
 	]
 }
